@@ -1,0 +1,13 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="app_name">WalkRaleigh</string>
+    <string-array name="colors_array">
+        <item>All</item>
+        <item>Outdoor/Park</item>
+        <item>Commercial</item>
+        <item>Civic/Municipal</item>
+        <item>Amusement</item>
+        <item>Favorites</item>
+    </string-array>
+
+</resources>
