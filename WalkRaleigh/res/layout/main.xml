@@ -20,8 +20,8 @@
         <LinearLayout
             android:id="@+id/TypeLayout"
             android:layout_width="fill_parent"
-            android:layout_height="wrap_content"
-            android:gravity="right" >
+            android:layout_height="fill_parent"
+            android:gravity="center_vertical|right" >
 
             <TextView
                 android:id="@+id/routeTypeText"
@@ -33,7 +33,7 @@
 
             <Spinner
                 android:id="@+id/typeSpinner"
-                android:layout_width="136dp"
+                android:layout_width="150dp"
                 android:layout_height="wrap_content" />
         </LinearLayout>
     </LinearLayout>
