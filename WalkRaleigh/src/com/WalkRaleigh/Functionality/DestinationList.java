@@ -4,8 +4,6 @@ import java.io.IOException;
 import java.text.DecimalFormat;
 import java.util.ArrayList;
 
-import com.WalkRaleigh.R;
-import com.WalkRaleigh.Database.*;
 import android.app.Activity;
 import android.app.AlertDialog;
 import android.content.ContentValues;
@@ -15,15 +13,16 @@ import android.content.Intent;
 import android.database.Cursor;
 import android.database.SQLException;
 import android.database.sqlite.SQLiteDatabase;
+import android.graphics.Color;
 import android.graphics.Typeface;
 import android.location.Location;
 import android.location.LocationListener;
 import android.location.LocationManager;
 import android.net.Uri;
 import android.os.Bundle;
-import android.util.Log;
 import android.view.View;
 import android.view.View.OnClickListener;
+import android.view.ViewGroup;
 import android.widget.AdapterView;
 import android.widget.AdapterView.OnItemSelectedListener;
 import android.widget.ArrayAdapter;
@@ -31,7 +30,9 @@ import android.widget.Button;
 import android.widget.LinearLayout;
 import android.widget.Spinner;
 import android.widget.TextView;
-import android.widget.Toast;
+
+import com.WalkRaleigh.R;
+import com.WalkRaleigh.Database.WalkRaleighAdapter;
 
 public class DestinationList extends Activity {
 
@@ -47,6 +48,7 @@ public class DestinationList extends Activity {
 	Typeface myriadpro;
 	WalkRaleighAdapter db;
 	Button homeButton;
+	Spinner spinner;
 	private String filter = "All";
 
 	public void onCreate(Bundle savedInstanceState) {
@@ -77,12 +79,11 @@ public class DestinationList extends Activity {
 		});
 		TextView types = (TextView) findViewById(R.id.routeTypeText);
 		types.setTypeface(myriadpro);
-		Spinner spinner = (Spinner) findViewById(R.id.typeSpinner);
+		spinner = (Spinner) findViewById(R.id.typeSpinner);
 		spinner.setOnItemSelectedListener(new spinnerListener());
-		ArrayAdapter<CharSequence> adapter = ArrayAdapter.createFromResource(
-				this, R.array.colors_array,
-				android.R.layout.simple_spinner_item);
-		adapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
+		ArrayAdapter<CharSequence> adapter = new MyAdapter(
+				DestinationList.this, android.R.layout.simple_spinner_item,
+				this.getResources().getStringArray(R.array.colors_array));
 		spinner.setAdapter(adapter);
 		// End layout setup
 
@@ -172,6 +173,7 @@ public class DestinationList extends Activity {
 			int time = (int) (distance / 0.0567);
 			Button btn = new Button(this);
 			if (cur.getString(4).equalsIgnoreCase("commercial")) {
+
 				if (cur.getInt(6) == 0) {
 					btn.setBackgroundDrawable(getResources().getDrawable(
 							R.drawable.purpledest));
@@ -331,6 +333,42 @@ public class DestinationList extends Activity {
 		public void onNothingSelected(AdapterView<?> parent) {
 			filter = "All";
 			setButtons();
+		}
+	}
+
+	public class MyAdapter extends ArrayAdapter<CharSequence> {
+
+		public MyAdapter(Context context, int textViewResourceId,
+				String[] objects) {
+			super(context, textViewResourceId, objects);
+		}
+
+		@Override
+		public View getDropDownView(int position, View convertView,
+				ViewGroup parent) {
+			return getCustomView(position, convertView, parent);
+		}
+
+		@Override
+		public View getView(int position, View convertView, ViewGroup parent) {
+			return getCustomView(position, convertView, parent);
+		}
+
+		public View getCustomView(int position, View convertView,
+				ViewGroup parent) {
+			View view = super.getDropDownView(position, convertView, parent);
+			if (position == 1) {
+				view.setBackgroundColor(0xFF01944E);
+			} else if (position == 2) {
+				view.setBackgroundColor(0xFF6C2C8C);
+			} else if (position == 3) {
+				view.setBackgroundColor(0xFF0078B7);
+			} else if (position == 4) {
+				view.setBackgroundColor(0xFFFF8F35);
+			} else {
+				view.setBackgroundColor(Color.WHITE);
+			}
+			return view;
 		}
 	}
 
