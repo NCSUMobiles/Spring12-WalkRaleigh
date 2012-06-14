@@ -9,5 +9,25 @@
         <item>Amusement</item>
         <item>Favorites</item>
     </string-array>
+    <string-array name="cities_array">
+        <item>Select Your City</item>
+        <item>Atlanta</item>
+        <item>Austin</item>
+        <item>Boston</item>
+        <item>Brooklyn</item>
+        <item>Chicago</item>
+        <item>DC</item>
+        <item>Denver</item>
+        <item>Detroit</item>
+        <item>Durham</item>
+        <item>Manhattan</item>
+        <item>Philadelphia</item>
+        <item>Pittsburgh</item>
+        <item>Raleigh</item>
+        <item>San Francisco</item>
+        <item>Seattle</item>
+        <item>Tampa</item>
+        
+    </string-array>
 
 </resources>

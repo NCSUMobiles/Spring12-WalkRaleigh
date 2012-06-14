@@ -142,14 +142,14 @@ public class DestinationList extends Activity {
 			currentLocation.setLatitude(35.780378);
 			currentLocation.setLongitude(-78.639107);
 		}
-
+		
 		setButtons();
 
 		// Register the listener with the Location Manager to receive location
 		// updates
 		locationManager.requestLocationUpdates(LocationManager.GPS_PROVIDER,
 				60000, 0, locationListener);
-
+		
 	}
 
 	public void setButtons() {
@@ -160,7 +160,7 @@ public class DestinationList extends Activity {
 				+ currentLocation.getLatitude() + " - latitude) + ("
 				+ currentLocation.getLongitude() + " - longitude) * ("
 				+ currentLocation.getLongitude() + " - longitude))", null);
-
+		startManagingCursor(cur);
 		cur.moveToFirst();
 		// Loops until all locations have been iterated through
 		int i = 0;
@@ -256,7 +256,6 @@ public class DestinationList extends Activity {
 			i++;
 
 		}
-
 	}
 
 	private void buildAlertMessageNoGps() {

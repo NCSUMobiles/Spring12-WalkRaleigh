@@ -10,6 +10,7 @@ import android.database.SQLException;
 import android.database.sqlite.SQLiteDatabase;
 import android.database.sqlite.SQLiteException;
 import android.database.sqlite.SQLiteOpenHelper;
+import android.util.Log;
 
 public class WalkRaleighAdapter extends SQLiteOpenHelper {
 
@@ -60,7 +61,7 @@ public class WalkRaleighAdapter extends SQLiteOpenHelper {
 			// the default system path
 			// of your application so we are gonna be able to overwrite that
 			// database with our database.
-			
+
 			this.getReadableDatabase();
 
 			try {
@@ -88,22 +89,21 @@ public class WalkRaleighAdapter extends SQLiteOpenHelper {
 					SQLiteDatabase.OPEN_READONLY);
 
 		} catch (SQLiteException e) {
-
 			// database does't exist yet.
 
 		}
 
-		if (checkDB != null) {
-
-			if (checkDB.getVersion() != DATABASE_VERSION) {
-				checkDB.execSQL("DROP TABLE IF EXISTS " + DB_NAME);
-				checkDB.close();
-				return false;
-			} else {
+	if (checkDB != null) {
+//
+//			if (checkDB.getVersion() != DATABASE_VERSION) {
+//				checkDB.execSQL("DROP TABLE IF EXISTS " + DB_NAME);
+//				checkDB.close();
+//				return false;
+//			} else {
 				checkDB.close();
 				return true;
-			}
-
+//			}
+//
 		} else {
 			return false;
 		}
