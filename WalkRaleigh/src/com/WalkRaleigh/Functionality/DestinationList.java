@@ -1,8 +1,16 @@
 package com.WalkRaleigh.Functionality;
 
+import java.io.BufferedInputStream;
+import java.io.File;
+import java.io.FileOutputStream;
 import java.io.IOException;
+import java.io.InputStream;
+import java.net.URL;
+import java.net.URLConnection;
 import java.text.DecimalFormat;
 import java.util.ArrayList;
+
+import org.apache.http.util.ByteArrayBuffer;
 
 import android.app.Activity;
 import android.app.AlertDialog;
@@ -50,7 +58,6 @@ public class DestinationList extends Activity {
 	Button homeButton;
 	Spinner spinner;
 	private String filter = "All";
-
 	public void onCreate(Bundle savedInstanceState) {
 
 		// Set font for text
@@ -370,6 +377,7 @@ public class DestinationList extends Activity {
 			}
 			return view;
 		}
+
 	}
 
 }
