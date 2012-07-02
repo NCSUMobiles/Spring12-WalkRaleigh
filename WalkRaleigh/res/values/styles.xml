@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
 
-    <style name="customTheme" parent="@android:Theme.Black">
+    <style name="customTheme" parent="@android:style/Theme.Black.NoTitleBar">
         <item name="android:spinnerStyle">@style/Widget.Spinner</item>
     </style>
 

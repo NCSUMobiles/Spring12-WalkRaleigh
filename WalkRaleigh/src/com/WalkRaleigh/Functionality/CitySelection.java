@@ -18,18 +18,14 @@ import android.util.Log;
 import android.view.View;
 import android.view.View.OnClickListener;
 import android.widget.AdapterView;
-import android.widget.AdapterView.OnItemClickListener;
 import android.widget.AdapterView.OnItemSelectedListener;
 import android.widget.ArrayAdapter;
 import android.widget.Button;
 import android.widget.Spinner;
 
 import com.WalkRaleigh.R;
-import com.WalkRaleigh.Functionality.DestinationList.MyAdapter;
-import com.WalkRaleigh.Functionality.DestinationList.spinnerListener;
 
 public class CitySelection extends Activity {
-
 	private Typeface myriadpro;
 	String DBPATH = "/data/data/com.WalkRaleigh/databases";
 	String DBNAME = "/data";
@@ -52,26 +48,25 @@ public class CitySelection extends Activity {
 		btn.setOnClickListener(new OnClickListener() {
 			public void onClick(View view) {
 				newDatabase(
-						"https://github.com/NCSUMobiles/Spring12-WalkRaleigh/raw/master/"
-								+ city, DBPATH + DBNAME);
+						"https://github.com/NCSUMobiles/Spring12-WalkRaleigh/raw/master/Cities/" + city, DBPATH + DBNAME);
 				Intent i = new Intent(CitySelection.this, DestinationList.class);
 				CitySelection.this.startActivity(i);
 			}
 
 		});
 
-		Button def = (Button) findViewById(R.id.button2);
-		def.setText("Default Database");
-		def.setOnClickListener(new OnClickListener() {
-
-			public void onClick(View view) {
-				File del = new File(DBPATH + DBNAME);
-				del.delete();
-				Intent i = new Intent(CitySelection.this, DestinationList.class);
-				CitySelection.this.startActivity(i);
-			}
-
-		});
+//		Button def = (Button) findViewById(R.id.button2);
+//		def.setText("Default Database");
+//		def.setOnClickListener(new OnClickListener() {
+//
+//			public void onClick(View view) {
+//				File del = new File(DBPATH + DBNAME);
+//				del.delete();
+//				Intent i = new Intent(CitySelection.this, DestinationList.class);
+//				CitySelection.this.startActivity(i);
+//			}
+//
+//		});
 		Spinner spinner = (Spinner) findViewById(R.id.spinner1);
 		ArrayAdapter<CharSequence> adapter = ArrayAdapter.createFromResource(
 				this, R.array.cities_array,
@@ -99,6 +94,7 @@ public class CitySelection extends Activity {
 			FileOutputStream output = new FileOutputStream(file);
 			output.write(buf.toByteArray());
 			output.flush();
+			Log.i("herp", file.length()+"");
 			output.close();
 
 		} catch (IOException e) {
@@ -113,7 +109,8 @@ public class CitySelection extends Activity {
 			if (pos == 0) {
 				btn.setEnabled(false);
 			} else {
-				city = view.toString();
+				city = (String) parent.getItemAtPosition(pos);
+				Log.i("herp", city);
 				btn.setEnabled(true);
 			}
 		}
