@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-    <string name="app_name">WalkNCState</string>
+    <string name="app_name">Walk NC State</string>
     <string-array name="colors_array">
         <item>All</item>
         <item>Outdoor/Park</item>
