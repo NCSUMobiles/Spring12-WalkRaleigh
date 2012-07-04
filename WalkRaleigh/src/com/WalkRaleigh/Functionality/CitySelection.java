@@ -12,7 +12,6 @@ import org.apache.http.util.ByteArrayBuffer;
 
 import android.app.Activity;
 import android.content.Intent;
-import android.graphics.Typeface;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.View;
@@ -24,9 +23,9 @@ import android.widget.Button;
 import android.widget.Spinner;
 
 import com.WalkRaleigh.R;
+import com.WalkRaleigh.Adapters.CustomSpinnerAdapter;
 
 public class CitySelection extends Activity {
-	private Typeface myriadpro;
 	String DBPATH = "/data/data/com.WalkRaleigh/databases";
 	String DBNAME = "/data";
 	String city;
@@ -34,9 +33,6 @@ public class CitySelection extends Activity {
 
 	public void onCreate(Bundle savedInstanceState) {
 
-		// Set font for text
-		myriadpro = Typeface.createFromAsset(getAssets(),
-				"MyriadPro-Semibold.otf");
 
 		super.onCreate(savedInstanceState);
 
@@ -55,23 +51,10 @@ public class CitySelection extends Activity {
 
 		});
 
-//		Button def = (Button) findViewById(R.id.button2);
-//		def.setText("Default Database");
-//		def.setOnClickListener(new OnClickListener() {
-//
-//			public void onClick(View view) {
-//				File del = new File(DBPATH + DBNAME);
-//				del.delete();
-//				Intent i = new Intent(CitySelection.this, DestinationList.class);
-//				CitySelection.this.startActivity(i);
-//			}
-//
-//		});
 		Spinner spinner = (Spinner) findViewById(R.id.spinner1);
-		ArrayAdapter<CharSequence> adapter = ArrayAdapter.createFromResource(
-				this, R.array.cities_array,
-				android.R.layout.simple_spinner_item);
-		adapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
+		ArrayAdapter<CharSequence> adapter = new CustomSpinnerAdapter(
+				CitySelection.this, android.R.layout.simple_spinner_item,
+				this.getResources().getStringArray(R.array.cities_array));
 		spinner.setAdapter(adapter);
 		spinner.setOnItemSelectedListener(new spinnerListener());
 

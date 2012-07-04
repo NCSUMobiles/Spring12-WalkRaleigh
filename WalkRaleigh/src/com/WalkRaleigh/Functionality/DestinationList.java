@@ -1,16 +1,8 @@
 package com.WalkRaleigh.Functionality;
 
-import java.io.BufferedInputStream;
-import java.io.File;
-import java.io.FileOutputStream;
 import java.io.IOException;
-import java.io.InputStream;
-import java.net.URL;
-import java.net.URLConnection;
 import java.text.DecimalFormat;
 import java.util.ArrayList;
-
-import org.apache.http.util.ByteArrayBuffer;
 
 import android.app.Activity;
 import android.app.AlertDialog;
@@ -21,7 +13,6 @@ import android.content.Intent;
 import android.database.Cursor;
 import android.database.SQLException;
 import android.database.sqlite.SQLiteDatabase;
-import android.graphics.Color;
 import android.graphics.Typeface;
 import android.location.Location;
 import android.location.LocationListener;
@@ -30,7 +21,6 @@ import android.net.Uri;
 import android.os.Bundle;
 import android.view.View;
 import android.view.View.OnClickListener;
-import android.view.ViewGroup;
 import android.widget.AdapterView;
 import android.widget.AdapterView.OnItemSelectedListener;
 import android.widget.ArrayAdapter;
@@ -40,24 +30,38 @@ import android.widget.Spinner;
 import android.widget.TextView;
 
 import com.WalkRaleigh.R;
+import com.WalkRaleigh.Adapters.CustomSpinnerAdapter;
 import com.WalkRaleigh.Database.WalkRaleighAdapter;
 
 public class DestinationList extends Activity {
 
-	// Set this to true if running on an emulator. sets gps coordinates
-	// manually.
-	boolean emulator = false;
-
+	// used to hold the user's current location
 	Location currentLocation;
+	// assigned whenever the user sets their home location,
+	// They can always return to this location after their walk.
 	Location home;
+	// database filled with available destinations
 	SQLiteDatabase destDatabase;
+
 	LinearLayout mainLayout;
+
+	// the list of buttons visible on screen for the destinations
 	ArrayList<Button> buttons = new ArrayList<Button>();
+	// used for the text on the signs.
 	Typeface myriadpro;
+	// adapter used to access the database of destinations
 	WalkRaleighAdapter db;
+	// used to set the home location and then return to it
 	Button homeButton;
+	// for selecting destination types
 	Spinner spinner;
+	// filter is set for All by default
 	private String filter = "All";
+
+	/**
+	 * Creates the layout of destinations and the buttons to sort them and set
+	 * the home destination
+	 */
 	public void onCreate(Bundle savedInstanceState) {
 
 		// Set font for text
@@ -88,7 +92,7 @@ public class DestinationList extends Activity {
 		types.setTypeface(myriadpro);
 		spinner = (Spinner) findViewById(R.id.typeSpinner);
 		spinner.setOnItemSelectedListener(new spinnerListener());
-		ArrayAdapter<CharSequence> adapter = new MyAdapter(
+		ArrayAdapter<CharSequence> adapter = new CustomSpinnerAdapter(
 				DestinationList.this, android.R.layout.simple_spinner_item,
 				this.getResources().getStringArray(R.array.colors_array));
 		spinner.setAdapter(adapter);
@@ -97,7 +101,10 @@ public class DestinationList extends Activity {
 		// Acquire a reference to the system Location Manager
 		final LocationManager locationManager = (LocationManager) this
 				.getSystemService(Context.LOCATION_SERVICE);
+
 		// Define a listener that responds to location updates
+		// Default location is set so there's no force close when a location
+		// can't be found.
 		LocationListener locationListener = new LocationListener() {
 			public void onLocationChanged(Location location) {
 				// Called when a new location is found by the network location
@@ -114,11 +121,13 @@ public class DestinationList extends Activity {
 			public void onProviderEnabled(String provider) {
 			}
 
+			// If the GPS is not on, or it's turned off, an alert is created
 			public void onProviderDisabled(String provider) {
 				buildAlertMessageNoGps();
 			}
 		};
 
+		// Creates new writeable database connection
 		db = new WalkRaleighAdapter(this);
 		try {
 			db.createDataBase();
@@ -137,20 +146,30 @@ public class DestinationList extends Activity {
 					locationManager
 							.getLastKnownLocation(locationManager.GPS_PROVIDER));
 
-		} catch (NullPointerException e) {
+		}
+		// This is where it creates a default location at the Raleigh Capitol
+		// Building, if one can't be found.
+		catch (NullPointerException e) {
 			currentLocation = new Location("");
 			currentLocation.setLatitude(35.780378);
 			currentLocation.setLongitude(-78.639107);
 		}
-		
+
 		setButtons();
 
 		// Register the listener with the Location Manager to receive location
 		// updates
 		locationManager.requestLocationUpdates(LocationManager.GPS_PROVIDER,
 				60000, 0, locationListener);
-		
+
 	}
+
+	/**
+	 * Queries the database and creates buttons for all of the destinations that
+	 * fit the type. It orders them from closest to farthest as well. Before
+	 * doing so, it removes all the previous buttons so there are no memory
+	 * leaks.
+	 */
 
 	public void setButtons() {
 		mainLayout.removeAllViews();
@@ -163,7 +182,6 @@ public class DestinationList extends Activity {
 		startManagingCursor(cur);
 		cur.moveToFirst();
 		// Loops until all locations have been iterated through
-		int i = 0;
 		Location temp = new Location(currentLocation);
 		while (!cur.isAfterLast()) {
 			// Sets up a Location object for the closest point
@@ -253,11 +271,14 @@ public class DestinationList extends Activity {
 			mainLayout.addView(btn);
 			// Goes to next closest location and repeats
 			cur.moveToNext();
-			i++;
 
 		}
 	}
 
+	/**
+	 * This builds an alert message that tells the user that their GPS is turned
+	 * off. They are given the option to go into the settings and turn it on.
+	 */
 	private void buildAlertMessageNoGps() {
 		AlertDialog.Builder builder = new AlertDialog.Builder(this);
 		builder.setMessage("Your GPS is disabled! Would you like to enable it?")
@@ -280,6 +301,22 @@ public class DestinationList extends Activity {
 		alert.show();
 	}
 
+	/**
+	 * Creates a window giving the description of a location and three options:
+	 * to go there, to cancel, and to set it as a favorite location.
+	 * 
+	 * @param v
+	 *            The button and corresponding location for which the dialog is
+	 *            relating to
+	 * @param curLat
+	 *            Latitude of the location passed in so that it can be passed to
+	 *            Google Navigation
+	 * @param curLong
+	 *            Longitude of the location passed in so that it can be passed
+	 *            to Google Navigation
+	 * @param cur
+	 *            database result used to get information about the location
+	 */
 	private void buildAlertMessageDescription(final View v,
 			final double curLat, final double curLong, final Cursor cur) {
 		AlertDialog.Builder builder = new AlertDialog.Builder(this);
@@ -315,6 +352,20 @@ public class DestinationList extends Activity {
 		alert.show();
 	}
 
+	/**
+	 * onClickListener to pass the location coordinates to google maps
+	 * 
+	 * @param v
+	 *            the buttons which is pressed
+	 * @param srcLat
+	 *            latitude of current location
+	 * @param srcLong
+	 *            longitude of current location
+	 * @param destLat
+	 *            latitude of destination
+	 * @param destLong
+	 *            longitude of destination
+	 */
 	public void onDestClick(View v, double srcLat, double srcLong,
 			double destLat, double destLong) {
 
@@ -327,6 +378,12 @@ public class DestinationList extends Activity {
 		startActivity(intent);
 	}
 
+	/**
+	 * Populates the spinner with the possible values of the filter
+	 * 
+	 * @author djak250
+	 *
+	 */
 	public class spinnerListener implements OnItemSelectedListener {
 
 		public void onItemSelected(AdapterView<?> parent, View view, int pos,
@@ -341,42 +398,4 @@ public class DestinationList extends Activity {
 			setButtons();
 		}
 	}
-
-	public class MyAdapter extends ArrayAdapter<CharSequence> {
-
-		public MyAdapter(Context context, int textViewResourceId,
-				String[] objects) {
-			super(context, textViewResourceId, objects);
-		}
-
-		@Override
-		public View getDropDownView(int position, View convertView,
-				ViewGroup parent) {
-			return getCustomView(position, convertView, parent);
-		}
-
-		@Override
-		public View getView(int position, View convertView, ViewGroup parent) {
-			return getCustomView(position, convertView, parent);
-		}
-
-		public View getCustomView(int position, View convertView,
-				ViewGroup parent) {
-			View view = super.getDropDownView(position, convertView, parent);
-			if (position == 1) {
-				view.setBackgroundColor(0xFF01944E);
-			} else if (position == 2) {
-				view.setBackgroundColor(0xFF6C2C8C);
-			} else if (position == 3) {
-				view.setBackgroundColor(0xFF0078B7);
-			} else if (position == 4) {
-				view.setBackgroundColor(0xFFFF8F35);
-			} else {
-				view.setBackgroundColor(Color.WHITE);
-			}
-			return view;
-		}
-
-	}
-
 }
