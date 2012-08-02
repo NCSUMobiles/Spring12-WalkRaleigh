@@ -8,9 +8,16 @@ import android.view.ViewGroup;
 import android.widget.ArrayAdapter;
 import android.widget.TextView;
 
+/**
+ * Adjusts the appearance of the spinner object. Allows specification for colors based on filter type.
+ * @author David Johnson
+ *
+ */
+
 public class CustomSpinnerAdapter extends ArrayAdapter<CharSequence> {
 
-	public CustomSpinnerAdapter(Context context, int textViewResourceId, String[] objects) {
+	public CustomSpinnerAdapter(Context context, int textViewResourceId,
+			String[] objects) {
 		super(context, textViewResourceId, objects);
 	}
 
@@ -24,6 +31,8 @@ public class CustomSpinnerAdapter extends ArrayAdapter<CharSequence> {
 		return getCustomView(position, convertView, parent);
 	}
 
+	// Specifies each selection item. If an item doesn't match any of the
+	// current filters, then it is colored white.
 	public View getCustomView(int position, View convertView, ViewGroup parent) {
 		View view = super.getDropDownView(position, convertView, parent);
 		((TextView) view).setGravity(Gravity.CENTER);

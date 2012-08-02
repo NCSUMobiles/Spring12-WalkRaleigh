@@ -33,6 +33,17 @@ import com.WalkRaleigh.R;
 import com.WalkRaleigh.Adapters.CustomSpinnerAdapter;
 import com.WalkRaleigh.Database.WalkRaleighAdapter;
 
+/**
+ * DestinationList is a sorted list of popular destinations in the current city.
+ * The destinations are color-coded and sorted by distance from current
+ * location, shortest to longest. The list can be filtered to only hold specific
+ * types of destinations, and locations can be favorited and filtered so that
+ * only they show up. The user may also set their home coordinates so that they
+ * may return to their start point at the end of their journey.
+ * 
+ * @author David Johnson
+ * 
+ */
 public class DestinationList extends Activity {
 
 	// used to hold the user's current location
@@ -174,6 +185,8 @@ public class DestinationList extends Activity {
 	public void setButtons() {
 		mainLayout.removeAllViews();
 		Cursor cur;
+		// Queries database to retrieve and ordered list by distance from the
+		// database.
 		cur = destDatabase.rawQuery("SELECT * FROM destinations ORDER BY (("
 				+ currentLocation.getLatitude() + " - latitude) * ("
 				+ currentLocation.getLatitude() + " - latitude) + ("
@@ -197,8 +210,11 @@ public class DestinationList extends Activity {
 			// of 3.4 MPH multiplied by 1.5 to account for turns
 			int time = (int) (distance / 0.0567);
 			Button btn = new Button(this);
-			if (cur.getString(4).equalsIgnoreCase("commercial")) {
 
+			// Sets appropriate background on button for destination type.
+			if (cur.getString(4).equalsIgnoreCase("commercial")) {
+				// Draws a distinction between favorite Int stored in the 6th
+				// row.
 				if (cur.getInt(6) == 0) {
 					btn.setBackgroundDrawable(getResources().getDrawable(
 							R.drawable.purpledest));
@@ -234,6 +250,8 @@ public class DestinationList extends Activity {
 				}
 
 			}
+
+			// Sets visibility for button based on filter parameter.
 			if (filter.equalsIgnoreCase("All")) {
 				btn.setVisibility(0);
 			} else if (filter.equalsIgnoreCase("Favorites")) {
@@ -249,12 +267,18 @@ public class DestinationList extends Activity {
 					btn.setVisibility(8);
 				}
 			}
+
+			// Button Formatting
 			btn.setPadding(0, 0, 0, 100);
 			btn.setTypeface(myriadpro);
 			btn.setTextSize(21);
 			btn.setText("It's a " + time + " minute walk to\n"
 					+ cur.getString(3) + "\n(~" + df.format(distance) + " mi.)");
 			btn.setTag(cur.getString(3));
+
+			// When clicked an alert comes up with a description of options to
+			// walk there, not walk there, and to set the destination as a
+			// favorite.
 			btn.setOnClickListener(new OnClickListener() {
 				public void onClick(View v) {
 					Cursor cur = destDatabase.rawQuery(
@@ -381,8 +405,8 @@ public class DestinationList extends Activity {
 	/**
 	 * Populates the spinner with the possible values of the filter
 	 * 
-	 * @author djak250
-	 *
+	 * @author David Johnson
+	 * 
 	 */
 	public class spinnerListener implements OnItemSelectedListener {
 

@@ -25,14 +25,26 @@ import android.widget.Spinner;
 import com.WalkRaleigh.R;
 import com.WalkRaleigh.Adapters.CustomSpinnerAdapter;
 
+/**
+ * This activity allows the user to select which city they are in. In the
+ * future, this may be decided by GPS location. It works by dumping the DB
+ * currently on the phone and downloading the selected one from GitHub. In the
+ * future, this will possibly be located on WalkRaleigh's own servers.
+ * 
+ * @author David Johnson
+ * 
+ */
 public class CitySelection extends Activity {
 	String DBPATH = "/data/data/com.WalkRaleigh/databases";
 	String DBNAME = "/data";
 	String city;
 	Button btn;
 
+	/**
+	 * Sets up the layout and creates the spinner containing possible city
+	 * locations.
+	 */
 	public void onCreate(Bundle savedInstanceState) {
-
 
 		super.onCreate(savedInstanceState);
 
@@ -44,7 +56,8 @@ public class CitySelection extends Activity {
 		btn.setOnClickListener(new OnClickListener() {
 			public void onClick(View view) {
 				newDatabase(
-						"https://github.com/NCSUMobiles/Spring12-WalkRaleigh/raw/master/Cities/" + city, DBPATH + DBNAME);
+						"https://github.com/NCSUMobiles/Spring12-WalkRaleigh/raw/master/Cities/"
+								+ city, DBPATH + DBNAME);
 				Intent i = new Intent(CitySelection.this, DestinationList.class);
 				CitySelection.this.startActivity(i);
 			}
@@ -52,14 +65,24 @@ public class CitySelection extends Activity {
 		});
 
 		Spinner spinner = (Spinner) findViewById(R.id.spinner1);
+		// I thought about parsing through the HTML and creating this city array
+		// dynamically, but never got around to doing it. Future update!!!
 		ArrayAdapter<CharSequence> adapter = new CustomSpinnerAdapter(
-				CitySelection.this, android.R.layout.simple_spinner_item,
-				this.getResources().getStringArray(R.array.cities_array));
+				CitySelection.this, android.R.layout.simple_spinner_item, this
+						.getResources().getStringArray(R.array.cities_array));
 		spinner.setAdapter(adapter);
 		spinner.setOnItemSelectedListener(new spinnerListener());
 
 	}
 
+	/**
+	 * Downloads the new database from the GitHub repo.
+	 * 
+	 * @param fileURL
+	 *            - City-specific URL for database file.
+	 * @param fileName
+	 *            - File name to save the database as.
+	 */
 	public void newDatabase(String fileURL, String fileName) {
 		try {
 			URL url = new URL(fileURL);
@@ -77,14 +100,21 @@ public class CitySelection extends Activity {
 			FileOutputStream output = new FileOutputStream(file);
 			output.write(buf.toByteArray());
 			output.flush();
-			Log.i("herp", file.length()+"");
 			output.close();
 
 		} catch (IOException e) {
-
+			e.printStackTrace();
 		}
 	}
 
+	/**
+	 * This class will default the Go button as unclickable so that the user
+	 * must pick a location. Once a user has picked their city, they can click
+	 * on Go.
+	 * 
+	 * @author David Johnson
+	 * 
+	 */
 	public class spinnerListener implements OnItemSelectedListener {
 
 		public void onItemSelected(AdapterView<?> parent, View view, int pos,
@@ -93,7 +123,6 @@ public class CitySelection extends Activity {
 				btn.setEnabled(false);
 			} else {
 				city = (String) parent.getItemAtPosition(pos);
-				Log.i("herp", city);
 				btn.setEnabled(true);
 			}
 		}

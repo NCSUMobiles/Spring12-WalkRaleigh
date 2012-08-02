@@ -10,13 +10,12 @@ import android.database.SQLException;
 import android.database.sqlite.SQLiteDatabase;
 import android.database.sqlite.SQLiteException;
 import android.database.sqlite.SQLiteOpenHelper;
-import android.util.Log;
 
 public class WalkRaleighAdapter extends SQLiteOpenHelper {
 
 	// The Android's default system path of your application database.
 	private static String DB_PATH = "/data/data/com.WalkRaleigh/databases/";
-
+	// Database name
 	private static String DB_NAME = "data";
 
 	// If you added anything to the database, change this number, or the changes
@@ -93,17 +92,17 @@ public class WalkRaleighAdapter extends SQLiteOpenHelper {
 
 		}
 
-	if (checkDB != null) {
-//
-//			if (checkDB.getVersion() != DATABASE_VERSION) {
-//				checkDB.execSQL("DROP TABLE IF EXISTS " + DB_NAME);
-//				checkDB.close();
-//				return false;
-//			} else {
-				checkDB.close();
-				return true;
-//			}
-//
+		if (checkDB != null) {
+			//
+			// if (checkDB.getVersion() != DATABASE_VERSION) {
+			// checkDB.execSQL("DROP TABLE IF EXISTS " + DB_NAME);
+			// checkDB.close();
+			// return false;
+			// } else {
+			checkDB.close();
+			return true;
+			// }
+			//
 		} else {
 			return false;
 		}
@@ -112,7 +111,7 @@ public class WalkRaleighAdapter extends SQLiteOpenHelper {
 	/**
 	 * Copies your database from your local assets-folder to the just created
 	 * empty database in the system folder, from where it can be accessed and
-	 * handled. This is done by transfering bytestream.
+	 * handled. This is done by transferring bytestream.
 	 * */
 	private void copyDataBase() throws IOException {
 
@@ -166,11 +165,5 @@ public class WalkRaleighAdapter extends SQLiteOpenHelper {
 	@Override
 	public void onUpgrade(SQLiteDatabase db, int oldVersion, int newVersion) {
 	}
-
-	// Add your public helper methods to access and get content from the
-	// database.
-	// You could return cursors by doing "return myDataBase.query(....)" so it'd
-	// be easy
-	// to you to create adapters for your views.
 
 }
